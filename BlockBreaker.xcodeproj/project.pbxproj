@@ -15,6 +15,9 @@
 		C369B1C61DCEE275001DED5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C369B1C41DCEE275001DED5A /* LaunchScreen.storyboard */; };
 		C369B1D11DCEE275001DED5A /* BlockBreakerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C369B1D01DCEE275001DED5A /* BlockBreakerTests.m */; };
 		C369B1DC1DCEE275001DED5A /* BlockBreakerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = C369B1DB1DCEE275001DED5A /* BlockBreakerUITests.m */; };
+		C369B1EB1DCEE295001DED5A /* BlockerModel.m in Sources */ = {isa = PBXBuildFile; fileRef = C369B1EA1DCEE295001DED5A /* BlockerModel.m */; };
+		C369B1EE1DCEF4AE001DED5A /* BlockView.m in Sources */ = {isa = PBXBuildFile; fileRef = C369B1ED1DCEF4AE001DED5A /* BlockView.m */; };
+		C369B1F01DCF9A39001DED5A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C369B1EF1DCF9A39001DED5A /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,11 @@
 		C369B1D71DCEE275001DED5A /* BlockBreakerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlockBreakerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C369B1DB1DCEE275001DED5A /* BlockBreakerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlockBreakerUITests.m; sourceTree = "<group>"; };
 		C369B1DD1DCEE275001DED5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C369B1E91DCEE295001DED5A /* BlockerModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlockerModel.h; path = ../BlockerModel.h; sourceTree = "<group>"; };
+		C369B1EA1DCEE295001DED5A /* BlockerModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlockerModel.m; path = ../BlockerModel.m; sourceTree = "<group>"; };
+		C369B1EC1DCEF4AE001DED5A /* BlockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockView.h; sourceTree = "<group>"; };
+		C369B1ED1DCEF4AE001DED5A /* BlockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlockView.m; sourceTree = "<group>"; };
+		C369B1EF1DCF9A39001DED5A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C369B1F01DCF9A39001DED5A /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +90,7 @@
 		C369B1AA1DCEE274001DED5A = {
 			isa = PBXGroup;
 			children = (
+				C369B1EF1DCF9A39001DED5A /* QuartzCore.framework */,
 				C369B1B51DCEE275001DED5A /* BlockBreaker */,
 				C369B1CF1DCEE275001DED5A /* BlockBreakerTests */,
 				C369B1DA1DCEE275001DED5A /* BlockBreakerUITests */,
@@ -101,6 +111,10 @@
 		C369B1B51DCEE275001DED5A /* BlockBreaker */ = {
 			isa = PBXGroup;
 			children = (
+				C369B1E91DCEE295001DED5A /* BlockerModel.h */,
+				C369B1EA1DCEE295001DED5A /* BlockerModel.m */,
+				C369B1EC1DCEF4AE001DED5A /* BlockView.h */,
+				C369B1ED1DCEF4AE001DED5A /* BlockView.m */,
 				C369B1B91DCEE275001DED5A /* AppDelegate.h */,
 				C369B1BA1DCEE275001DED5A /* AppDelegate.m */,
 				C369B1BC1DCEE275001DED5A /* ViewController.h */,
@@ -270,9 +284,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C369B1EB1DCEE295001DED5A /* BlockerModel.m in Sources */,
 				C369B1BE1DCEE275001DED5A /* ViewController.m in Sources */,
 				C369B1BB1DCEE275001DED5A /* AppDelegate.m in Sources */,
 				C369B1B81DCEE275001DED5A /* main.m in Sources */,
+				C369B1EE1DCEF4AE001DED5A /* BlockView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +432,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = BlockBreaker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apm.smartiothome.BlockBreaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -427,6 +444,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = BlockBreaker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.apm.smartiothome.BlockBreaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
