@@ -109,7 +109,7 @@
                             andTitle:@"Game Over"
                 andCompletionHandler:^{
                     [self.myModel initializeGame];
-                    [self.paddleView removeFromSuperview];
+                    //[self.paddleView removeFromSuperview];
                     //[self.ballView removeFromSuperview];
                     [self initializeGameView];
                     self.gameCLock.paused = NO;

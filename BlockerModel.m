@@ -70,7 +70,7 @@
     
     UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
     CGSize paddleSize = [paddleImage size];
-    self.paddleRect = CGRectMake(self.screenWidth/2, (1 - PADDLE_BOTTOM_OFFSET)*self.screenHeight,
+    self.paddleRect = CGRectMake((self.screenWidth-paddleSize.width)/2, (1 - PADDLE_BOTTOM_OFFSET)*self.screenHeight,
                                  paddleSize.width, paddleSize.height);
     
     UIImage* ballImage = [UIImage imageNamed:@"ball.png"];
@@ -105,38 +105,28 @@
 -(void) adjustIfBallHitEdge
 {
     CGRect rect = self.ballRect;
+    
     if (self.ballRect.origin.x + self.ballRect.size.width >= self.screenWidth)
     {
-        //self.ballRect = CGRectMake(self.screenWidth-self.ballRect.size.width, self.ballRect.origin.y,
-                                  // self.ballRect.size.width, self.ballRect.size.height);
         rect.origin = CGPointMake(self.screenWidth-self.ballRect.size.width, self.ballRect.origin.y);
         self.ballVelocity = CGPointMake(-1*self.ballVelocity.x, self.ballVelocity.y);
     }
     else if(self.ballRect.origin.x <= 0)
     {
-//        self.ballRect = CGRectMake(0, self.ballRect.origin.y,
-//                                   self.ballRect.size.width, self.ballRect.size.height);
         rect.origin = CGPointMake(0, self.ballRect.origin.y);
-        
         self.ballVelocity = CGPointMake(-1*self.ballVelocity.x, self.ballVelocity.y);
     }
     else if (self.ballRect.origin.y + self.ballRect.size.width >= self.screenHeight)
     {
-        //self.ballRect = CGRectMake(self.screenWidth/2, self.screenHeight-BALL_START_OFFSET,
-          //                         self.ballRect.size.width, self.ballRect.size.height);
-        
         rect.origin = CGPointMake(self.screenWidth/2, (1 - BALL_START_OFFSET)*self.screenHeight);
         self.ballVelocity = CGPointMake(self.ballVelocity.x, -1*self.ballVelocity.y);
     }
     else if(self.ballRect.origin.y <= TOP_OFFSET)
     {
-//        self.ballRect = CGRectMake(self.ballRect.origin.x, TOP_OFFSET,
-//                                   self.ballRect.size.width, self.ballRect.size.height);
-        
         rect.origin = CGPointMake(self.ballRect.origin.x, TOP_OFFSET);
-        
         self.ballVelocity = CGPointMake(self.ballVelocity.x, -1*self.ballVelocity.y);
     }
+    
     self.ballRect = rect;
 }
 
