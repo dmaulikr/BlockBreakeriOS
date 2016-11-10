@@ -13,6 +13,7 @@
 
 #define MAX_Y_JERK 1
 #define MAX_TAP_OFFSET 0.3
+#define PADDLE_BOTTOM_OFFSET 0.125
 
 
 @interface ViewController ()
@@ -58,7 +59,8 @@
     self.myModel.screenHeight = self.view.bounds.size.height;
     NSLog(@"New frame of view is %@",NSStringFromCGRect(self.view.frame));
     NSLog(@"New bounds of view is %@",NSStringFromCGRect(self.view.bounds));
-    NSLog(@"New frame of paddle view is %@",NSStringFromCGRect(self.paddleView.frame));
+    NSLog(@"Paddle view is %@",self.paddleView);
+    //NSLog(@"New frame of paddle view is %@",NSStringFromCGRect(self.paddleView.frame));
     NSLog(@"New bounds of paddle view is %@",NSStringFromCGRect(self.paddleView.bounds));
 }
 
@@ -79,10 +81,28 @@
         self.paddleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"paddle"]];
         self.paddleView.backgroundColor = [UIColor clearColor];
         self.paddleView.opaque = NO;
-        self.paddleView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin;
+        self.paddleView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
+        NSLog(@"Paddle rect is %@",NSStringFromCGRect(self.myModel.paddleRect));
+        [self.paddleView setFrame:self.myModel.paddleRect];
         [self.view addSubview:self.paddleView];
+        
+        
+//        UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
+//        CGSize paddleSize = [paddleImage size];
+//        
+//        CGRect paddleRect = CGRectMake((self.view.bounds.size.width-paddleSize.width)/2, (1 - PADDLE_BOTTOM_OFFSET)*self.view.bounds.size.height, paddleSize.width, paddleSize.height);
+//        UIImageView *paddleView = [[UIImageView alloc] initWithImage:paddleImage];
+//        paddleView.backgroundColor = [UIColor clearColor];
+//        paddleView.opaque = NO;
+//        paddleView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
+//        
+//        [paddleView setFrame:paddleRect];
+//        [self.view addSubview:paddleView];
     }
-    [self.paddleView setFrame:self.myModel.paddleRect];
+    else
+    {
+        [self.paddleView setFrame:self.myModel.paddleRect];
+    }
 
     
     //Add the image view for the ball
@@ -92,9 +112,13 @@
         self.ballView.backgroundColor = [UIColor clearColor];
         self.ballView.opaque = NO;
         self.ballView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin;
+        [self.ballView setFrame:self.myModel.ballRect];
         [self.view addSubview:self.ballView];
     }
-    [self.ballView setFrame:self.myModel.ballRect];
+    else
+    {
+        [self.ballView setFrame:self.myModel.ballRect];
+    }
 }
 
 -(void) updateDisplay:(CADisplayLink *)sender
