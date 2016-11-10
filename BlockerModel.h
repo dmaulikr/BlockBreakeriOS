@@ -16,11 +16,10 @@
 @property CGFloat screenHeight;
 @property CGRect paddleRect;
 @property CGRect ballRect;
-@property NSMutableArray <BlockView *> *brokenBlocks;
+
 @property NSMutableArray <NSMutableArray <BlockView *>*> *blocks;
 -(instancetype) initWithScreenWidth:(CGFloat)width andHeight:(CGFloat)height;
--(void)updateModelAtTime:(CFTimeInterval)timestamp
-     withCompletionBlock:(dispatch_block_t)completionHandler;
+-(void)updateModelAtTime:(CFTimeInterval)timestamp;
 -(BOOL) didGameEnd;
 -(void) initializeGame;
 @end

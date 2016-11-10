@@ -14,10 +14,10 @@
 #define DEFAULT_SCREEN_HEIGHT 460
 #define BLOCK_PCNT 0.2
 #define TOP_OFFSET 20
-#define BOTTOM_OFFSET 80
-#define BALL_START_OFFSET 160
+#define PADDLE_BOTTOM_OFFSET 0.125
+#define BALL_START_OFFSET 0.25
 #define VELOCITY 200
-#define SIDE_DOWN_RATIO 0.2
+#define SIDE_DOWN_RATIO 0.1
 
 @interface BlockerModel()
 
@@ -70,88 +70,96 @@
     
     UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
     CGSize paddleSize = [paddleImage size];
-    self.paddleRect = CGRectMake(self.screenWidth/2, self.screenHeight-BOTTOM_OFFSET,
+    self.paddleRect = CGRectMake(self.screenWidth/2, (1 - PADDLE_BOTTOM_OFFSET)*self.screenHeight,
                                  paddleSize.width, paddleSize.height);
     
     UIImage* ballImage = [UIImage imageNamed:@"ball.png"];
     CGSize ballSize = [ballImage size];
-    self.ballRect = CGRectMake(self.screenWidth/2, self.screenHeight-BALL_START_OFFSET,
+    self.ballRect = CGRectMake(self.screenWidth/2, (1 - BALL_START_OFFSET)*self.screenHeight,
                                ballSize.width, ballSize.height);
+    
     
     self.ballVelocity = CGPointMake(VELOCITY, -1*VELOCITY);
     self.lastTime = 0;
-    self.brokenBlocks = [[NSMutableArray alloc] init];
 }
 
 -(void)updateModelAtTime:(CFTimeInterval)timestamp
-     withCompletionBlock:(dispatch_block_t)completionHandler;
 {
-    CGFloat newX = self.ballRect.origin.x, newY = self.ballRect.origin.y;
     if(self.lastTime)
     {
-       newX += (self.ballVelocity.x*(timestamp-self.lastTime));
-       newY += (self.ballVelocity.y*(timestamp-self.lastTime));
+        CGRect newBall = self.ballRect;
+        newBall.origin.x += (self.ballVelocity.x*(timestamp-self.lastTime));
+        newBall.origin.y += (self.ballVelocity.y*(timestamp-self.lastTime));
+        self.ballRect = newBall;
+        
+        [self adjustIfBallHitEdge];
+        [self checkIfHitBlock];
+        [self checkIfHitPaddle];
+
     }
     self.lastTime = timestamp;
     
-    self.ballRect = CGRectMake(newX, newY,
-                               self.ballRect.size.width, self.ballRect.size.height);
-    [self adjustIfBallHitEdge];
-    [self checkIfHitBlock];
-    [self checkIfHitPaddle];
-    if (completionHandler)
-    {
-        completionHandler();
-    }
     //NSLog(@"New rect is origin: (%.2f, %.2f) size (%.2f, %.2f)",self.ballRect.origin.x, self.ballRect.origin.y, self.ballRect.size.width, self.ballRect.size.height);
 }
 
 -(void) adjustIfBallHitEdge
 {
+    CGRect rect = self.ballRect;
     if (self.ballRect.origin.x + self.ballRect.size.width >= self.screenWidth)
     {
-        self.ballRect = CGRectMake(self.screenWidth-self.ballRect.size.width, self.ballRect.origin.y,
-                                   self.ballRect.size.width, self.ballRect.size.height);
+        //self.ballRect = CGRectMake(self.screenWidth-self.ballRect.size.width, self.ballRect.origin.y,
+                                  // self.ballRect.size.width, self.ballRect.size.height);
+        rect.origin = CGPointMake(self.screenWidth-self.ballRect.size.width, self.ballRect.origin.y);
         self.ballVelocity = CGPointMake(-1*self.ballVelocity.x, self.ballVelocity.y);
     }
     else if(self.ballRect.origin.x <= 0)
     {
-        self.ballRect = CGRectMake(0, self.ballRect.origin.y,
-                                   self.ballRect.size.width, self.ballRect.size.height);
+//        self.ballRect = CGRectMake(0, self.ballRect.origin.y,
+//                                   self.ballRect.size.width, self.ballRect.size.height);
+        rect.origin = CGPointMake(0, self.ballRect.origin.y);
+        
         self.ballVelocity = CGPointMake(-1*self.ballVelocity.x, self.ballVelocity.y);
     }
     else if (self.ballRect.origin.y + self.ballRect.size.width >= self.screenHeight)
     {
-        self.ballRect = CGRectMake(self.screenWidth/2, self.screenHeight-BALL_START_OFFSET,
-                                   self.ballRect.size.width, self.ballRect.size.height);
+        //self.ballRect = CGRectMake(self.screenWidth/2, self.screenHeight-BALL_START_OFFSET,
+          //                         self.ballRect.size.width, self.ballRect.size.height);
+        
+        rect.origin = CGPointMake(self.screenWidth/2, (1 - BALL_START_OFFSET)*self.screenHeight);
         self.ballVelocity = CGPointMake(self.ballVelocity.x, -1*self.ballVelocity.y);
     }
     else if(self.ballRect.origin.y <= TOP_OFFSET)
     {
-        self.ballRect = CGRectMake(self.ballRect.origin.x, TOP_OFFSET,
-                                   self.ballRect.size.width, self.ballRect.size.height);
+//        self.ballRect = CGRectMake(self.ballRect.origin.x, TOP_OFFSET,
+//                                   self.ballRect.size.width, self.ballRect.size.height);
+        
+        rect.origin = CGPointMake(self.ballRect.origin.x, TOP_OFFSET);
+        
         self.ballVelocity = CGPointMake(self.ballVelocity.x, -1*self.ballVelocity.y);
     }
+    self.ballRect = rect;
 }
 
 -(void) checkIfHitBlock
 {
     BOOL sideImpact = NO;
+    BOOL impact = NO;
     
     for (NSMutableArray *nextCol in self.blocks)
     {
         CGRect blockRect = [[nextCol lastObject] frame];
         if ([nextCol count] && CGRectIntersectsRect(blockRect, self.ballRect))
         {
+            impact = YES;
             if (self.ballRect.origin.y + self.ballRect.size.height < blockRect.origin.y + blockRect.size.height - self.sideDownOffset)
             {
                 sideImpact = YES;
             }
-            [self.brokenBlocks addObject:[nextCol lastObject]];
+            [[nextCol lastObject] removeFromSuperview];
             [nextCol removeLastObject];
         }
     }
-    if([self.brokenBlocks count])
+    if(impact)
     {
         if(sideImpact)
         {
