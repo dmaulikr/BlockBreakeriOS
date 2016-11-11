@@ -36,7 +36,6 @@
     self.tapOffset =  MAX_TAP_OFFSET*self.view.bounds.size.height;
     
     self.view.backgroundColor = [UIColor colorWithWhite:0.75 alpha:1];
-    //self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     
     [self initializeGameView];
     
@@ -54,14 +53,14 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    NSLog(@"Changed interface orientation from %ld to %ld",(long)fromInterfaceOrientation,(long)[[UIApplication sharedApplication] statusBarOrientation]);
+//    NSLog(@"Changed interface orientation from %ld to %ld",(long)fromInterfaceOrientation,(long)[[UIApplication sharedApplication] statusBarOrientation]);
     self.myModel.screenWidth = self.view.bounds.size.width;
     self.myModel.screenHeight = self.view.bounds.size.height;
-    NSLog(@"New frame of view is %@",NSStringFromCGRect(self.view.frame));
-    NSLog(@"New bounds of view is %@",NSStringFromCGRect(self.view.bounds));
-    NSLog(@"Paddle view is %@",self.paddleView);
-    //NSLog(@"New frame of paddle view is %@",NSStringFromCGRect(self.paddleView.frame));
-    NSLog(@"New bounds of paddle view is %@",NSStringFromCGRect(self.paddleView.bounds));
+//    NSLog(@"New frame of view is %@",NSStringFromCGRect(self.view.frame));
+//    NSLog(@"New bounds of view is %@",NSStringFromCGRect(self.view.bounds));
+//    NSLog(@"Paddle view is %@",self.paddleView);
+//    //NSLog(@"New frame of paddle view is %@",NSStringFromCGRect(self.paddleView.frame));
+//    NSLog(@"New bounds of paddle view is %@",NSStringFromCGRect(self.paddleView.bounds));
 }
 
 -(void) initializeGameView
@@ -76,32 +75,24 @@
     }
     
     //Add the image view for the paddle
+    UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
+    CGSize paddleSize = [paddleImage size];
+    
+    CGRect paddleRect = CGRectMake((self.view.bounds.size.width-paddleSize.width)/2, (1 - PADDLE_BOTTOM_OFFSET)*self.view.bounds.size.height, paddleSize.width, paddleSize.height);
+    
     if (nil == self.paddleView)
     {
         self.paddleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"paddle"]];
         self.paddleView.backgroundColor = [UIColor clearColor];
         self.paddleView.opaque = NO;
         self.paddleView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
-        NSLog(@"Paddle rect is %@",NSStringFromCGRect(self.myModel.paddleRect));
-        [self.paddleView setFrame:self.myModel.paddleRect];
+        NSLog(@"Paddle rect is %@",NSStringFromCGRect(paddleRect));
+        [self.paddleView setFrame:paddleRect];
         [self.view addSubview:self.paddleView];
-        
-        
-//        UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
-//        CGSize paddleSize = [paddleImage size];
-//        
-//        CGRect paddleRect = CGRectMake((self.view.bounds.size.width-paddleSize.width)/2, (1 - PADDLE_BOTTOM_OFFSET)*self.view.bounds.size.height, paddleSize.width, paddleSize.height);
-//        UIImageView *paddleView = [[UIImageView alloc] initWithImage:paddleImage];
-//        paddleView.backgroundColor = [UIColor clearColor];
-//        paddleView.opaque = NO;
-//        paddleView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
-//        
-//        [paddleView setFrame:paddleRect];
-//        [self.view addSubview:paddleView];
     }
     else
     {
-        [self.paddleView setFrame:self.myModel.paddleRect];
+        [self.paddleView setFrame:paddleRect];
     }
 
     
@@ -124,6 +115,7 @@
 -(void) updateDisplay:(CADisplayLink *)sender
 {
     //NSLog(@"Received display link at time %.2f",sender.timestamp);
+    self.myModel.paddleRect = [self.paddleView frame];
     [self.myModel updateModelAtTime:sender.timestamp];
     if([self.myModel didGameEnd])
     {
@@ -133,8 +125,6 @@
                             andTitle:@"Game Over"
                 andCompletionHandler:^{
                     [self.myModel initializeGame];
-                    //[self.paddleView removeFromSuperview];
-                    //[self.ballView removeFromSuperview];
                     [self initializeGameView];
                     self.gameCLock.paused = NO;
                 }];
@@ -142,7 +132,6 @@
     else
     {
         [self.ballView setFrame:self.myModel.ballRect];
-        [self.paddleView setFrame:self.myModel.paddleRect];
     }
     
 }
@@ -194,7 +183,7 @@
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    NSLog(@"Touches moved with num touches %ld",[touches count]) ;
+    //NSLog(@"Touches moved with num touches %ld",[touches count]) ;
     for (UITouch *touch in touches)
     {
         [self updatePaddleRectFromTouch:touch];
@@ -206,14 +195,16 @@
     CGPoint p = [touch locationInView:self.view];
     CGPoint startPoint = [touch previousLocationInView:self.view];
     
-    NSLog(@"Touches moved from (%.1f, %.1f) to (%.1f,%.1f)",startPoint.x, startPoint.y, p.x, p.y) ;
+   CGRect startRect = self.paddleView.frame;
+   //CGRect startRect = self.myModel.paddleRect;
     
-    CGFloat startX = MAX(0,self.myModel.paddleRect.origin.x + p.x-startPoint.x);
-    startX = MIN(self.view.bounds.size.width - self.myModel.paddleRect.size.width, startX);
-    self.myModel.paddleRect = CGRectMake(startX,
-                                         self.myModel.paddleRect.origin.y,
-                                         self.myModel.paddleRect.size.width,
-                                         self.myModel.paddleRect.size.height);
+    
+    CGFloat startX = MAX(0,startRect.origin.x + p.x-startPoint.x);
+    startX = MIN(self.view.bounds.size.width - startRect.size.width, startX);
+    CGRect rect = startRect;
+    rect.origin.x = startX;
+    self.paddleView.frame = rect;
+   // NSLog(@"Touches moved from (%.1f, %.1f) to (%.1f,%.1f)\nPaddle rect is %@",startPoint.x, startPoint.y, p.x, p.y, NSStringFromCGRect(rect)) ;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -221,7 +212,7 @@
     UITouch *touch = [touches anyObject];
     CGPoint p = [touch locationInView:self.view];
     
-    NSLog(@"Touches ended at point (%.1f,%.1f)",p.x,p.y) ;
+    //NSLog(@"Touches ended at point (%.1f,%.1f)",p.x,p.y) ;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -229,7 +220,7 @@
     UITouch *touch = [touches anyObject];
     CGPoint p = [touch locationInView:self.view];
     
-    NSLog(@"Touches cancelled at point (%.1f,%.1f)",p.x,p.y) ;
+   // NSLog(@"Touches cancelled at point (%.1f,%.1f)",p.x,p.y) ;
 }
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

@@ -68,11 +68,6 @@
         }
     }
     
-    UIImage* paddleImage = [UIImage imageNamed:@"paddle.png"];
-    CGSize paddleSize = [paddleImage size];
-    self.paddleRect = CGRectMake((self.screenWidth-paddleSize.width)/2, (1 - PADDLE_BOTTOM_OFFSET)*self.screenHeight,
-                                 paddleSize.width, paddleSize.height);
-    NSLog(@"Paddle rect is %@",NSStringFromCGRect(self.paddleRect));
     
     UIImage* ballImage = [UIImage imageNamed:@"ball.png"];
     CGSize ballSize = [ballImage size];
